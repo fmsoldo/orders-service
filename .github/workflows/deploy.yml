@@ -1,0 +1,27 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - production
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Emit repository_dispatch
+        uses: mvasigh/dispatch-action@main
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repo: Obligatorio-Devops
+          owner: fmsoldo
+          event_type: deploy
+          message: |
+            {
+              "repository": "${{ github.repository }}",
+              "commit": "${{ github.sha }}",
+              "jar_file": "orders-service-example.jar"
+            }
