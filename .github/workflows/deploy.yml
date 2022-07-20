@@ -3,6 +3,7 @@ name: deploy
 on:
   push:
     branches:
+      - add-branch-param-to-deploy-workflow
       - main
       - staging
       - production
@@ -12,6 +13,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Extract branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.4
+
       - name: Emit repository_dispatch
         uses: mvasigh/dispatch-action@main
         with:
@@ -22,6 +27,8 @@ jobs:
           message: |
             {
               "repository": "${{ github.repository }}",
+              "service_name": "orders-service",
               "commit": "${{ github.sha }}",
+              "branch": "${{ steps.branch-name.outputs.current_branch }}",
               "jar_file": "orders-service-example.jar"
             }
